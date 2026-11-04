@@ -95,14 +95,18 @@
   .sec-head p{color:var(--ash);margin:0}
 
   /* ---- Install steps ---- */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  @media(max-width:820px){.steps{grid-template-columns:1fr}}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  @media(max-width:980px){.steps{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.steps{grid-template-columns:1fr}}
   .step{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:26px 24px;position:relative}
   .step .n{font-family:"Oswald",sans-serif;font-size:15px;font-weight:700;color:var(--night);
     background:var(--amber);width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
     margin-bottom:16px}
   .step h3{font-size:19px;font-weight:600;margin:0 0 8px;text-transform:none;font-family:"Inter",sans-serif;letter-spacing:0}
   .step p{color:var(--ash);font-size:15px;margin:0}
+  .step p + p{margin-top:10px}
+  .step strong{color:var(--cream);font-weight:600}
+  .step .hint{font-size:13.5px;color:var(--ash-dim)}
   .step code{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--amber);
     background:rgba(242,163,60,.10);padding:2px 6px;border-radius:5px}
   .callout{margin-top:26px;background:rgba(79,158,106,.08);border:1px solid rgba(79,158,106,.32);
@@ -111,6 +115,27 @@
     text-transform:uppercase;color:var(--contain);white-space:nowrap;padding-top:2px}
   .warn{background:rgba(232,98,42,.08);border-color:rgba(232,98,42,.32)}
   .warn .tag{color:var(--amber)}
+
+  /* ---- "This build" note (latest release) ---- */
+  .buildnote{max-width:520px;margin:30px auto 0;text-align:left;background:rgba(21,26,34,.85);
+    border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+  .buildnote .head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .buildnote .label{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--amber)}
+  .buildnote .ver{font-family:"Oswald",sans-serif;font-size:18px;font-weight:600;letter-spacing:.03em}
+  .buildnote .date{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ash-dim);margin-left:auto}
+  .buildnote ul{margin:0;padding-left:18px;color:var(--ash);font-size:14.5px}
+  .buildnote li{margin:2px 0}
+
+  /* ---- Download panel ---- */
+  .dl-panel{margin-top:34px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;
+    background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:24px 26px}
+  .dl-panel .cta-row{justify-content:flex-start}
+  .dl-panel .facts{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ash);line-height:1.8}
+  .dl-panel .facts b{color:var(--cream);font-weight:500}
+  .desktop-tip{display:none}
+  .is-desktop .desktop-tip{display:flex}
+  .updating{margin-top:20px}
 
   /* ---- Features ---- */
   .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
@@ -182,10 +207,20 @@
       <h1>Know when the <span class="fire">fire</span> gets close.</h1>
       <p class="lede">Watchdog tracks active wildfires and nearby hazards in real time, and taps you on the shoulder when something moves toward you.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#install">↓ Install for Android</a>
-        <a class="btn btn-ghost" href="#features">See what it watches</a>
+        <a class="btn btn-primary" href="https://github.com/nsat-dev/watchdog-droid/releases/latest/download/Watchdog.apk">↓ Download for Android</a>
+        <a class="btn btn-ghost" href="#install">How to install</a>
       </div>
-      <div class="meta">Free · No account · Location stays on your device</div>
+      <div class="meta">Free · No account · Location stays on your device · Android 8.0+</div>
+
+      <!-- Filled in from the latest GitHub release; stays hidden if it can't be loaded. -->
+      <div class="buildnote" id="buildNote" hidden>
+        <div class="head">
+          <span class="label">This build</span>
+          <span class="ver" id="buildVer"></span>
+          <span class="date" id="buildDate"></span>
+        </div>
+        <ul id="buildNotes"></ul>
+      </div>
     </div>
   </div>
 </div>
@@ -195,36 +230,60 @@
   <div class="wrap">
     <div class="sec-head">
       <div class="eyebrow">Get it running</div>
-      <h2>Install in three steps</h2>
-      <p>Watchdog is distributed as a direct download (APK) rather than through the Play Store, so you install it yourself. It takes about a minute.</p>
+      <h2>Install in four steps</h2>
+      <p>Watchdog is a direct download (an APK file) rather than a Play Store app, so you'll allow a one-time install from your browser. It takes about a minute.</p>
     </div>
 
     <div class="steps">
       <div class="step">
         <div class="n">1</div>
         <h3>Download the app</h3>
-        <p>Tap the download button below on your Android phone. You'll get a file named <code>watchdog.apk</code>.</p>
+        <p>On your Android phone, tap <strong>Download for Android</strong> below. You'll get a file named <code>Watchdog.apk</code>.</p>
+        <p class="hint">It's about <span class="apk-size">70 MB</span>, so Wi-Fi is a good idea.</p>
       </div>
       <div class="step">
         <div class="n">2</div>
-        <h3>Allow the install</h3>
-        <p>Open the file. If Android asks, allow installs from your browser this once — it's under <code>Settings → Apps → Special access → Install unknown apps</code>.</p>
+        <h3>Open the file</h3>
+        <p>Tap it in your download notification, or find it in <strong>Files › Downloads</strong> and tap to open.</p>
       </div>
       <div class="step">
         <div class="n">3</div>
-        <h3>Grant location &amp; alerts</h3>
-        <p>On first launch, allow <strong>location</strong> and <strong>notifications</strong> so Watchdog can measure distance and warn you. Here's what each is for →</p>
+        <h3>Allow the install</h3>
+        <p>Android will ask to allow installs from your browser: tap <strong>Settings</strong>, turn on <strong>Allow from this source</strong>, go back, then tap <strong>Install</strong>.</p>
+        <p class="hint">If Play Protect warns about an unknown app, tap <strong>More details</strong> → <strong>Install anyway</strong>.</p>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <h3>Open &amp; allow alerts</h3>
+        <p>Launch <strong>Watchdog</strong> and allow <strong>location</strong> and <strong>notifications</strong> so it can measure distance and warn you.</p>
+        <p class="hint">For on-time alerts, set its battery use to <strong>Unrestricted</strong>. <a href="#support">What each permission is for</a></p>
       </div>
     </div>
 
-    <div class="cta-row" style="margin-top:34px;justify-content:flex-start">
-      <a class="btn btn-primary" id="download-btn" href="https://github.com/nsat-dev/watchdog-droid/releases/latest">↓ Download latest APK</a>
-      <a class="btn btn-ghost" href="https://github.com/nsat-dev/watchdog-droid/releases">All releases</a>
+    <div class="dl-panel">
+      <div class="cta-row">
+        <a class="btn btn-primary" id="download-btn" href="https://github.com/nsat-dev/watchdog-droid/releases/latest/download/Watchdog.apk">↓ Download for Android</a>
+        <a class="btn btn-ghost" href="https://github.com/nsat-dev/watchdog-droid/releases">Release notes</a>
+      </div>
+      <div class="facts">
+        <div><b>Watchdog.apk</b> · Version <span class="apk-ver">1.91</span> · <span class="apk-size">70 MB</span></div>
+        <div>Android 8.0 (Oreo) or newer · Free, no account</div>
+      </div>
+    </div>
+
+    <div class="callout desktop-tip">
+      <span class="tag">On a computer?</span>
+      <span>Watchdog runs on Android phones. Open <strong>nsat-dev.github.io/watchdog-droid</strong> in your phone's browser and download it there.</span>
+    </div>
+
+    <div class="callout updating">
+      <span class="tag">Updating</span>
+      <span>Already have Watchdog? Download the latest version the same way and tap <strong>Install</strong>. Android replaces the old version.</span>
     </div>
 
     <div class="callout warn">
       <span class="tag">Heads up</span>
-      <span>Android may warn about installing outside the Play Store — that's expected for a direct download. Only install the APK from this page or the linked GitHub releases. Requires Android 8.0 (Oreo) or newer.</span>
+      <span>Android warns about apps installed outside the Play Store. That's expected for a direct download. Only install Watchdog from this page or its <a href="https://github.com/nsat-dev/watchdog-droid/releases">GitHub releases</a>.</span>
     </div>
   </div>
 </section>
@@ -333,12 +392,64 @@
       <div class="kicker">WATCHDOG</div>
       Watchdog aggregates public hazard data for situational awareness. It is not an emergency service and can be delayed, incomplete, or wrong. In a real emergency, follow official evacuation orders and local authorities — never rely on this app alone.
     </div>
-    <div>© <span id="yr"></span> Neal Puff</div>
+    <div>Version <span class="apk-ver">1.91</span> · Android 8.0+ · © <span id="yr"></span> Neal Puff</div>
   </div>
 </footer>
 
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // On a computer, point people to their phone.
+  if (!/Android/i.test(navigator.userAgent) && !/iPhone|iPad|iPod/i.test(navigator.userAgent) &&
+      window.matchMedia && window.matchMedia("(pointer:fine)").matches) {
+    document.documentElement.classList.add("is-desktop");
+  }
+
+  // ── "This build" ─────────────────────────────────────────────────────────
+  // Shows the version, date and notes of the latest GitHub release, and fills
+  // in the APK's version and size. The download buttons always serve that
+  // release's Watchdog.apk. To publish a new version: create a release, attach
+  // the APK named exactly Watchdog.apk, and write the notes you want shown
+  // here, one change per line. The page never needs editing.
+  //
+  // Reads GitHub's public API from the visitor's browser (60 requests/hour per
+  // visitor). If it's blocked or fails, the note stays hidden and the version
+  // and size keep the values written in the page.
+  (function(){
+    var REPO = "nsat-dev/watchdog-droid", APK = "Watchdog.apk";
+    if (!window.fetch) return;
+    fetch("https://api.github.com/repos/" + REPO + "/releases/latest",
+          { headers: { "Accept": "application/vnd.github+json" } })
+      .then(function(r){ if (!r.ok) throw new Error("GitHub API returned HTTP " + r.status); return r.json(); })
+      .then(function(rel){
+        var title = (rel.name || rel.tag_name || "").trim();
+        var m = title.match(/\d+(?:\.\d+)+/) || (rel.tag_name || "").match(/\d+(?:\.\d+)+/);
+        var version = m ? m[0] : "";
+        var asset = (rel.assets || []).filter(function(a){ return a.name === APK; })[0];
+        if (version) document.querySelectorAll(".apk-ver").forEach(function(e){ e.textContent = version; });
+        if (asset && asset.size) {
+          var mb = Math.round(asset.size / 1000000) + " MB";
+          document.querySelectorAll(".apk-size").forEach(function(e){ e.textContent = mb; });
+        }
+        var lines = (rel.body || "").split(/\r?\n/)
+          .map(function(l){ return l.replace(/^\s*[-*•]\s*/, "").trim(); })
+          .filter(Boolean);
+        if (!title && !lines.length) return;
+        document.getElementById("buildVer").textContent = version ? "Version " + version : title;
+        if (rel.published_at) {
+          document.getElementById("buildDate").textContent = new Date(rel.published_at)
+            .toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+        }
+        var ul = document.getElementById("buildNotes");
+        lines.slice(0, 6).forEach(function(l){
+          var li = document.createElement("li"); li.textContent = l; ul.appendChild(li);
+        });
+        document.getElementById("buildNote").hidden = false;
+      })
+      .catch(function(err){
+        console.warn("[Watchdog] Could not load the latest release:", err && err.message ? err.message : err);
+      });
+  })();
 </script>
 </body>
 </html>

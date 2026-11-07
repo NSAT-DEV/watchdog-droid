@@ -181,6 +181,7 @@
   footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
   footer .disc{max-width:62ch;line-height:1.6}
   .kicker{font-family:"JetBrains Mono",monospace;color:var(--ember);font-size:12px;letter-spacing:.1em}
+  [data-rel][hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -239,7 +240,7 @@
         <div class="n">1</div>
         <h3>Download the app</h3>
         <p>On your Android phone, tap <strong>Download for Android</strong> below. You'll get a file named <code>Watchdog.apk</code>.</p>
-        <p class="hint">It's about <span class="apk-size">70 MB</span>, so Wi-Fi is a good idea.</p>
+        <p class="hint">It's <span data-rel="size" hidden>about <span class="apk-size"></span></span><span data-rel-alt="size">a large download</span>, so Wi-Fi is a good idea.</p>
       </div>
       <div class="step">
         <div class="n">2</div>
@@ -266,7 +267,7 @@
         <a class="btn btn-ghost" href="https://github.com/nsat-dev/watchdog-droid/releases">Release notes</a>
       </div>
       <div class="facts">
-        <div><b>Watchdog.apk</b> · Version <span class="apk-ver">1.91</span> · <span class="apk-size">70 MB</span></div>
+        <div><b>Watchdog.apk</b><span data-rel="ver" hidden> · Version <span class="apk-ver"></span></span><span data-rel="size" hidden> · <span class="apk-size"></span></span></div>
         <div>Android 8.0 (Oreo) or newer · Free, no account</div>
       </div>
     </div>
@@ -392,7 +393,7 @@
       <div class="kicker">WATCHDOG</div>
       Watchdog aggregates public hazard data for situational awareness. It is not an emergency service and can be delayed, incomplete, or wrong. In a real emergency, follow official evacuation orders and local authorities — never rely on this app alone.
     </div>
-    <div>Version <span class="apk-ver">1.91</span> · Android 8.0+ · © <span id="yr"></span> Neal Puff</div>
+    <div><span data-rel="ver" hidden>Version <span class="apk-ver"></span> · </span>Android 8.0+ · © <span id="yr"></span> Neal Puff</div>
   </div>
 </footer>
 
@@ -413,8 +414,7 @@
   // here, one change per line. The page never needs editing.
   //
   // Reads GitHub's public API from the visitor's browser (60 requests/hour per
-  // visitor). If it's blocked or fails, the note stays hidden and the version
-  // and size keep the values written in the page.
+  // visitor). If it's blocked or fails, the note, version and size stay hidden.
   (function(){
     var REPO = "nsat-dev/watchdog-droid", APK = "Watchdog.apk";
     if (!window.fetch) return;
@@ -426,10 +426,13 @@
         var m = title.match(/\d+(?:\.\d+)+/) || (rel.tag_name || "").match(/\d+(?:\.\d+)+/);
         var version = m ? m[0] : "";
         var asset = (rel.assets || []).filter(function(a){ return a.name === APK; })[0];
-        if (version) document.querySelectorAll(".apk-ver").forEach(function(e){ e.textContent = version; });
+        if (version) { document.querySelectorAll(".apk-ver").forEach(function(e){ e.textContent = version; });
+          document.querySelectorAll('[data-rel="ver"]').forEach(function(e){ e.hidden = false; }); }
         if (asset && asset.size) {
           var mb = Math.round(asset.size / 1000000) + " MB";
           document.querySelectorAll(".apk-size").forEach(function(e){ e.textContent = mb; });
+          document.querySelectorAll('[data-rel="size"]').forEach(function(e){ e.hidden = false; });
+          document.querySelectorAll('[data-rel-alt="size"]').forEach(function(e){ e.hidden = true; });
         }
         var lines = (rel.body || "").split(/\r?\n/)
           .map(function(l){ return l.replace(/^\s*[-*•]\s*/, "").trim(); })
